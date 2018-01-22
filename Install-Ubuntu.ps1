@@ -1,4 +1,4 @@
-﻿$ComputerName = "U1"
+﻿$ComputerName = "Ubu1"
 
 $VmName = "$Lab-$ComputerName"
 New-LabVm -ComputerName $ComputerName
