@@ -40,3 +40,23 @@ az vm create `
 
 az vm list --show-details
 az network vnet show --name $Vnet
+az network vnet subnet list --vnet-name Docker-Vnet
+az network vnet create --name Vnet-foo --address-prefix 10.42.0.0/16 --subnet-name "Pilot"  --subnet-prefix 10.42.0.0/24
+az network vnet list
+az vm list --show-details
+
+# Einen Address Space (Prefix) hinzufügen,
+# die schon vorhandenen prefixes müssen mit aufgelistet werden (10.52.0.0/16 ist schon vorhanden)
+az network vnet update --name Docker-Vnet --address-prefixes "10.52.0.0/16" "10.42.0.0/16"
+az network vnet list
+
+# Ein Subnet hinzufügen (aus dem neuen Address Space)
+az network vnet subnet create --name Pilot-Subnet --vnet-name Docker-Vnet --address-prefix "10.42.0.0/24"
+az network vnet subnet list --vnet-name Docker-Vnet
+
+# Die VM von dem einen Subnet in das andere Subnet stecken  
+az vm stop --name Docker-Ubu1 --no-wait
+az network nic list
+az network nic ip-config list --nic-name Docker-Ubu1VMNic
+az network nic ip-config update --nic-name Docker-Ubu1VMNic --name ipconfigDocker-Ubu1 --private-ip-address 10.42.0.4
+# Error: Private static IP address 10.42.0.4 does not belong to the range of subnet prefix 10.52.0.0/24.
