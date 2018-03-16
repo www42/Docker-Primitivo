@@ -1,9 +1,9 @@
-az --version
+az --version | select-string "azure-cli"
 az login
 az account show
 
 #region Variables
-$Name = "Ubu1"
+$Name = "Ubu2"
 $ResourceGroup = "DockerRG"
 $Location = "westeurope"
 $Image = "UbuntuLTS"
@@ -43,6 +43,11 @@ az vm create `
   --ssh-key-value $SshKeyValue
 #endregion
 
+az vm stop --name Ubu1 --no-wait
+az vm show --name $Name --show-details
+$Ip = az vm show --name $Name --show-details --output json --query publicIps
+test-netconnection -computername $Ip -port 22
+test-netconnection -computername 13.81.107.145 -port 22
 
 az vm list --show-details
 az network vnet show --name $Vnet
