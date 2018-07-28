@@ -1,0 +1,18 @@
+az aks list
+az aks get-credentials --name Monsters --resource-group containers
+ls -l .kube
+cat .kube/config
+
+kubectl version
+kubectl config get-contexts
+kubectl cluster-info
+kubectl get
+kubectl get nodes
+kubectl get pods
+kubectl get services
+
+kubectl apply -f ./nginx-deployment.yaml
+kubectl get pods
+
+kubectl apply -f ./nginx-service.yaml
+kubectl get services
