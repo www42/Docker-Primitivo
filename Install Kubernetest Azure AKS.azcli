@@ -1,0 +1,33 @@
+# https://docs.microsoft.com/en-us/azure/aks/create-cluster
+az --version | grep azure-cli
+location="westeurope"
+az group list | grep $location
+az aks list
+
+# https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create
+az aks get-versions --location=$location
+ls -l ~/.ssh/id_rsa.pub
+
+#                    default
+#                    ---------------
+#  --node-count      3
+#  --node-vm-size    Standard_D1_v2
+#  --admin-username  azureuser
+#  --ssh-key-value   ~/.ssh/id_rsa.pub
+
+az aks create \
+    --name kuar \
+    --resource-group containers \
+    --location=$location \
+    --kubernetes-version 1.11.1 \
+    --node-count 3 \
+    --node-vm-size Standard_D1_v2 \
+    --admin-username tj \
+    --ssh-key-value ~/.ssh/id_rsa.pub \
+    --no-wait
+
+
+
+kubectl config get-contexts
+az aks  get-credentials --name k8s --resource-group 20533D0702-LabRG
+cat .kube/config

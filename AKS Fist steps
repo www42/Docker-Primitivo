@@ -1,9 +1,0 @@
-# https://docs.microsoft.com/en-us/azure/aks/create-cluster
-az aks list
-az aks create --name k8s --resource-group containers --location westeurope --no-wait
-
-
-
-kubectl config get-contexts
-az aks  get-credentials --name k8s --resource-group 20533D0702-LabRG
-cat .kube/config
