@@ -1,11 +1,17 @@
 # https://docs.microsoft.com/en-us/azure/aks/create-cluster
-az --version | grep azure-cli
+
+name="kuar"
+group="containers"
 location="westeurope"
+
+az --version | grep azure-cli
+az account show
 az group list | grep $location
+
 az aks list
 
 # https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-create
-az aks get-versions --location=$location
+az aks get-versions --location $location
 ls -l ~/.ssh/id_rsa.pub
 
 #                    default
@@ -16,9 +22,9 @@ ls -l ~/.ssh/id_rsa.pub
 #  --ssh-key-value   ~/.ssh/id_rsa.pub
 
 az aks create \
-    --name kuar \
-    --resource-group containers \
-    --location=$location \
+    --name $name \
+    --resource-group $group \
+    --location $location \
     --kubernetes-version 1.11.1 \
     --node-count 3 \
     --node-vm-size Standard_D1_v2 \
@@ -26,8 +32,61 @@ az aks create \
     --ssh-key-value ~/.ssh/id_rsa.pub \
     --no-wait
 
+az aks show --name $name -o jsonc
 
-
+# https://kubernetes.io/docs/reference/kubectl/overview/
 kubectl config get-contexts
-az aks  get-credentials --name k8s --resource-group 20533D0702-LabRG
+az aks  get-credentials --name $name --resource-group $group
 cat .kube/config
+kubectl cluster-info
+kubectl version
+kubectl get componentstatuses   # contoller-mamager unhealthy
+                                # scheduler unhealthy
+                                # https://github.com/Azure/AKS/issues/173
+                                
+kubectl get nodes               # nodes only, master not listed
+kubectl describe node aks-nodepool1-55557499-0
+kubectl get daemonSets --namespace=kube-system
+kubectl get deployments --namespace=kube-system
+kubectl get services --namespace=kube-system
+
+# To get access to Kubernetes dashboard follow 
+# https://docs.microsoft.com/en-us/azure/aks/kubernetes-dashboard
+# ("kubectl proxy" does not work)
+#
+# PowerShell (not cloud shell)
+#             ^^^^^^^^^^^^^^^
+az --version | Select-String "azure-cli"
+kubectl version
+az aks install-cli  # installs to "C:\Program Files (x86)"  pay attention to $env:Path
+az login
+az aks get-credentials --resource-group containers --name kuar  #  C:\Users\tj\.kube\config
+kubectl create clusterrolebinding kubernetes-dashboard --clusterrole=cluster-admin --serviceaccount=kube-system:kubernetes-dashboard
+az aks browse --resource-group containers --name kuar
+# Ende dashboard
+
+# ===========================
+# Chapter 5. Pods
+# ===========================
+# kuar image https://github.com/kubernetes-up-and-running/kuard
+docker run -d --rm --name kuard -p 8080:8080 gcr.io/kuar-demo/kuard-amd64:1
+
+kubectl get pods
+kubectl run kuard --image=gcr.io/kuar-demo/kuard-amd64:1
+kubectl delete deployments/kuard
+
+ls -la $HOME/kuard/5-1-kuard-pod.yaml
+kubectl apply -f kuard/5-1-kuard-pod.yaml
+kubectl describe pod kuard
+kubectl get pods -o wide
+kubectl delete pods/kuard
+
+# kubectl port-forward kuard 8080:8080
+kubectl get nodes -o wide
+kubectl describe node aks-nodepool1-55557499-0
+
+kubectl logs kuard
+kubectl exec kuard date
+kubectl exec -it kuard ash
+kubectl cp kuard:/etc/passwd $HOME/kuard/passwd
+
