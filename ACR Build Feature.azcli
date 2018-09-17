@@ -1,0 +1,21 @@
+# https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-build
+
+# The commands in this tutorial series are formatted for the Bash shell. If you prefer to use PowerShell, 
+# Command Prompt, or another shell, you may need to adjust the line continuation and environment variable format 
+# accordingly.
+
+mkdir git
+cd git
+git clone https://github.com/www42/acr-build-helloworld-node
+cd acr-build-helloworld-node
+
+ACR_NAME=feynman
+RES_GROUP=containers
+az group list
+az group create --resource-group $RES_GROUP --location westeurope
+az acr create --resource-group $RES_GROUP --name $ACR_NAME --sku Standard --location westeurope
+az acr list
+
+az acr build --registry $ACR_NAME --image helloacrbuild:v1 .
+
+az acr repository list --name $ACR_NAME

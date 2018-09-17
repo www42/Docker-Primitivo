@@ -1,0 +1,12 @@
+# Create Azure Container Registry
+az group list
+resourceGroup="containers"
+
+az acr list
+acrName="einstein"
+az acr create --name $acrName --resource-group $resourceGroup --sku Basic --admin-enabled
+az acr list --query "[].{acrloginServer:loginServer}"
+
+az acr repository list --name $acrName
+az acr repository show-tags --name $acrName --repository greenmonster
+

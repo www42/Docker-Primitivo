@@ -1,0 +1,24 @@
+az --version
+az account list
+az group list
+# Set default ResourceGroup
+# https://docs.microsoft.com/en-us/cli/azure/azure-cli-configuration?view=azure-cli-latest
+az configure --defaults group=MC_containers_kuar_westeurope
+# No default ResourceGroup
+az configure --defaults group=
+
+az vm list --show-details
+az aks list
+kubectl get nodes
+kubectl get service
+kubectl get pods
+kubectl get deployment
+kubectl get service
+
+kubectl run jenkins --image=jenkins --replicas=1 --port=80
+kubectl expose deployment jenkins --port=8080 --type=LoadBalancer
+kubectl delete deployment jenkins
+kubectl delete service jenkins
+
+kubectl run jenkins2 --image=jenkins --replicas=1 --port=8080
+kubectl expose deployment jenkins2 --port=8080 --type=LoadBalancer
